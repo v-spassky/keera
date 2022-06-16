@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,500&display=swap" rel="stylesheet">
+    </head>
+    <body style="width: fit-content; height: fit-content;
+                 background-image: linear-gradient(to right, #8360c3, #2ebf91);
+                 font-family: 'Roboto Flex', sans-serif;">
+        <div id="keeraMainMenu" style="display: block;">
+            <button id="dictionaryBtn"
+                    style="padding: 6px;
+                           border: none;
+                           cursor: pointer;
+                           background-color: rgba(117, 190, 218, 0.0);
+                           text-decoration: underline;
+                           font-weight: 450;
+                           color: white;
+                           font-family: 'Roboto Flex', sans-serif;
+                           margin-bottom: 4px;">
+                Dictionary
+            </button>
+            <button id="settingsBtn"
+                    style="padding: 6px;
+                           border: none;
+                           cursor: pointer;
+                           background-color: rgba(117, 190, 218, 0.0);
+                           text-decoration: underline;
+                           font-weight: 450;
+                           color: white;
+                           font-family: 'Roboto Flex', sans-serif">
+                Settings
+            </button>
+        </div>
+        <div id="keeraDictionaryLayout" style="display: none; color: white;">
+            <button name="backBtn"
+                    style="padding: 6px;
+                           border: none;
+                           cursor: pointer;
+                           background-color: rgba(117, 190, 218, 0.0);
+                           text-decoration: underline;
+                           font-weight: 450;
+                           color: white;
+                           font-family: 'Roboto Flex', sans-serif">
+                Back
+            </button>
+            <ul id="keeraListOfTranslations" style="white-space: nowrap; padding: 4px; margin: 0px; list-style: none;;">
+            </ul>
+        </div>
+        <div id="keeraSettingsLayout" style="display: none; color: white; white-space: nowrap;">
+            <button name="backBtn"
+                    style="padding: 6px;
+                           border: none;
+                           cursor: pointer;
+                           background-color: rgba(117, 190, 218, 0.0);
+                           text-decoration: underline;
+                           font-weight: 450;
+                           color: white;
+                           font-family: 'Roboto Flex', sans-serif;">
+                Back
+            </button>
+            <div>
+                Settings wiil be there hopefully...
+            </div>
+        </div>
+    </body>
+</html>
+
+<script src="keeraMenu.js"></script>

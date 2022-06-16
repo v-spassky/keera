@@ -1,0 +1,3 @@
+# Typescript support not yet implemented.
+*.ts
+tsconfig.json

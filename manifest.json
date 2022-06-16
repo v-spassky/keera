@@ -1,0 +1,32 @@
+{
+    "name": "Keera",
+    "description": "Lets you add words with providied translation to local storage. When encountering added words, they will have a popup translation.",
+    "version": "0.1",
+    "manifest_version": 3,
+    "content_scripts": [
+        {
+            "matches": ["http://*/*", "https://*/*"],
+            "js": ["src/keeraBackground.js"]
+        }
+    ],
+    "permissions": [
+        "activeTab",
+        "storage"
+                   ],
+    "action": {
+        "default_popup": "src/keeraMenu.html",
+        "default_icon": {
+            "16": "/icons/keera_icon_16.png",
+            "32": "/icons/keera_icon_32.png",
+            "48": "/icons/keera_icon_48.png",
+            "128": "/icons/keera_icon_128.png" 
+                        }
+              },
+    "icons": {
+        "16": "/icons/keera_icon_16.png",
+        "32": "/icons/keera_icon_32.png",
+        "48": "/icons/keera_icon_48.png",
+        "128": "/icons/keera_icon_128.png"
+             }
+
+}
