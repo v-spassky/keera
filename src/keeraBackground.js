@@ -6,7 +6,7 @@
  * with the provided translation being shown in a popup.
  */
 
-const DEBUG = true;           // Enables logging debug information to the console.
+const DEBUG = false;           // Enables logging debug information to the console.
 const POPUP_OFFSET_PX = {     // Offset of the popup menu from the mouse cursor.
     x:  15,
     y: -15,
@@ -14,7 +14,8 @@ const POPUP_OFFSET_PX = {     // Offset of the popup menu from the mouse cursor.
                               // Initial popup menu HTML.
 const popupSnippet = `
     <div id="keeraPopupMenu"
-         style="position: absolute; display: none; 
+         class="hidden"
+         style="position: absolute; 
                 background-image: linear-gradient(to right, #8360c3, #2ebf91); 
                 width: fit-content; height: fit-content;
                 padding: 8px; border-radius: 8px;
@@ -52,8 +53,48 @@ const popupSnippet = `
                        font-family: 'Roboto Flex', sans-serif;">
         </button>
     </div>
+    <div id="keeraPopupTranslation"
+         class="hidden"
+         style="position: absolute;
+                background: rgb(106,200,196);
+                background: linear-gradient(90deg, rgba(106,200,196,1) 0%, rgba(60,131,130,1) 100%);
+                color: white; font-weight: 400;
+                width: fit-content; height: fit-content;
+                padding: 3px; border-radius: 3px;
+                box-shadow: 1px 1px 1px 1px rgba(0, 0, 255, .1);
+                font-family: 'Roboto Flex', sans-serif;">
+    </div>
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,500&display=swap');
+
+    #keeraPopupMenu {
+        transition: all 1s ease-out 0.25s;
+    }
+
+    #keeraPopupMenu.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    #keeraPopupMenu.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #keeraPopupTranslation {
+        transition: all 1s ease-out 0.25s;
+        transition-property: opacity, visibility;
+    }
+
+    #keeraPopupTranslation.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    #keeraPopupTranslation.visible {
+        opacity: 1;
+        visibility: visible;
+    }
     </style>
 `;
 
@@ -63,8 +104,13 @@ const popupCloseBtn = document.getElementById('keeraClosePopupBtn');
 const popupAddWordBtn = document.getElementById('addWordToKeeraBtn');
 const selectedWordInput = document.getElementById('keeraSelectedWord');
 const translationInput = document.getElementById('keeraTranslationInput');
+const popupTranslationWondow = document.getElementById('keeraPopupTranslation');
 
 let selectedText = '';
+let wordsToHighlight = {
+    'gives': 'даёт',
+    'Python': 'Питон',
+};
 
 document.addEventListener('selectionchange', setSelectedText);
 document.addEventListener('mouseup', showPopupIfSelectedText);
@@ -77,6 +123,20 @@ popupAddWordBtn.addEventListener(
     }
 );
 
+highlightAllWords();
+
+const highlightedWords = document.getElementsByName('keeraHighlightedWord');
+if (DEBUG) console.log(`Highlighted words count: ${highlightedWords.length}.`);
+
+for (let wordElement of highlightedWords) {
+    if (DEBUG) console.log(`Adding event listener to word ${wordElement}.`);
+    wordElement.addEventListener('mouseenter', showTranslation);
+    wordElement.addEventListener('mouseleave', hideTranslation);
+}
+
+getAllWordsFromKeera();
+console.log(wordsToHighlight)
+
 // -------------------------- Event handlers -------------------------- //
 
 function setSelectedText(event) {
@@ -88,7 +148,7 @@ function setSelectedText(event) {
 
     if (DEBUG) console.log(`Function setSelectedText(event) triggered.`);
 
-    if (popupMenu.style.display !== 'block') {
+    if (popupMenu.classList.contains('hidden')) {
         selectedText = document.getSelection ? document.getSelection().toString() :  document.selection.createRange().toString();
     }
 
@@ -109,10 +169,12 @@ function showPopupIfSelectedText(event) {
         y: event.pageY,
     };
 
-    if (selectedText) {
+    if (selectedText && popupMenu.classList.contains('hidden')) {
+        popupMenu.classList.remove('hidden');
+        popupMenu.classList.add('visible');
         popupMenu.style.left = `${mousePosition.x + POPUP_OFFSET_PX.x}px`;
         popupMenu.style.top = `${mousePosition.y + POPUP_OFFSET_PX.y}px`;
-        popupMenu.style.display='block';
+        translationInput.placeholder=`Translation for '${selectedText}'...`;
     }
 }
 
@@ -125,9 +187,42 @@ function hidePopup() {
 
     if (DEBUG) console.log(`Function hidePopup() triggered.`);
 
-    popupMenu.style.display='none';
-
+    popupMenu.classList.remove('visible');
+    popupMenu.classList.add('hidden');
+    translationInput.value='';
     selectedText = '';
+}
+
+function showTranslation(event) {
+
+    /* 
+     * Shows the translation of the selected word in a popup.
+     */
+
+    if (DEBUG) console.log(`Function showTranslation() triggered.`);
+
+    let mousePosition = {
+        x: event.pageX,
+        y: event.pageY,
+    };
+
+    popupTranslationWondow.classList.remove('hidden');
+    popupTranslationWondow.classList.add('visible');
+    popupTranslationWondow.style.left = `${mousePosition.x + POPUP_OFFSET_PX.x}px`;
+    popupTranslationWondow.style.top = `${mousePosition.y + POPUP_OFFSET_PX.y}px`;
+    popupTranslationWondow.innerText = event.target.getAttribute('data-translation');
+}
+
+function hideTranslation() {
+
+    /* 
+     * Hides the translation of the selected word in a popup.
+     */
+
+    if (DEBUG) console.log(`Function hideTranslation() triggered.`);
+
+    popupTranslationWondow.classList.remove('visible');
+    popupTranslationWondow.classList.add('hidden');
 }
 
 // ------------------ Operations with Chrome storage ------------------ //
@@ -150,4 +245,69 @@ function saveWordToKeera(word, translation) {
     );
 
     translationInput.value = '';
+}
+
+function getAllWordsFromKeera() {
+
+    /* 
+     * Fills the dictionary layout with words from Keera local storage.
+     */
+
+    if (DEBUG) console.log(`Function getAllWordsFromKeera() triggered.`);
+
+    chrome.storage.sync.get(
+        null,
+        function(keeraStorage) {
+
+            console.log(`Keera storage: ${JSON.stringify(keeraStorage)}.`);
+
+            for ([word, translation] of Object.entries(keeraStorage)) {
+                wordsToHighlight[word] = translation;
+            }
+        }
+    );
+}
+
+// ----------------------- Highlighting system ----------------------- //
+
+function highlightAllWords() {
+
+    /* 
+     * Recursively searches through DOM for words listed in
+     * global 'wordsToHighlight' list and substitutes them with <span> elements.
+     */
+
+    if (DEBUG) console.log(`Function highlightAllWords() triggered.`);
+
+    let allBodyElements = document.querySelectorAll('body *');
+
+    if (DEBUG) console.log(`Found ${allBodyElements.length} elements in the body.`);
+
+    for (DOMElement of allBodyElements) {
+
+        if (DEBUG) console.log(`Checking element: '${DOMElement}'.`);
+
+        for ([word, translation] of Object.entries(wordsToHighlight)) {
+
+            if (DEBUG) console.log(`Checking if '${word}' is in '${DOMElement.innerText}'.`);
+
+            elementText = DOMElement.innerText || [];
+
+            if (elementText.includes(word)) {
+
+                if (DEBUG) console.log(`Found word '${word}' in element with innerText: '${DOMElement.innerText}'.`);
+
+                let span = document.createElement('span');
+                span.innerText = word;
+                span.style.background = 'linear-gradient(to right, #8360c3, #2ebf91)';
+                span.style.boxShadow = '2px 2px 2px 2px rgba(0, 0, 255, .1)'
+                span.style.color = 'white';
+                span.style.borderRadius = '3px';
+                span.style.padding = '4px';
+                span.setAttribute('name', 'keeraHighlightedWord');
+                span.setAttribute('data-translation', translation);
+                DOMElement.innerHTML = DOMElement.innerHTML.replaceAll(word, span.outerHTML);
+            }
+        }
+    } 
 }

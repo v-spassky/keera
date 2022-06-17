@@ -20,8 +20,10 @@ Describe each folder and file in the repo.
 - First small icon popup, then big;
 - Set popup location in settings;
 - Implement success alerts;
-- Add Typscript source;
 - Implement highlights;
 - Limit popup size;
 - Edit/delete entries;
+- Active search in dictionary;
+- Z-index maxxx;
+- Make inline popup draggable;
 - Download and upload word sets.
