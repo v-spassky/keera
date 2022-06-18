@@ -21,22 +21,22 @@ Afterwards the fragment will be highlighted on all pages when encountered. Trans
 
 # Project file structure
 
-keera
-│
-├─ LICENSE
-├─ README.md
-├─ files_for_readme      
-│ └── demo_1.gif        
-├─ icons_
-│ ├── keera_icon_128.png
-│ ├── keera_icon_16.png
-│ ├── keera_icon_32.png
-│ └── keera_icon_48.png
-├─ manifest.json_____________Instructions for Chrome for packaging
-└─ src
-. ├── keeraBackground.js_____Runs in the active tab
-. ├── keeraMenu.html________Popup menu shown in the top right corner in click
-. └── keeraMenu.js__________Keeps keeraMenu.html interactive
+keera<br>
+│<br>
+├─ LICENSE<br>
+├─ README.md<br>
+├─ files_for_readme<br>
+│ └── demo_1.gif<br>
+├─ icons<br>
+│ ├── keera_icon_128.png<br>
+│ ├── keera_icon_16.png<br>
+│ ├── keera_icon_32.png<br>
+│ └── keera_icon_48.png<br>
+├─ manifest.json_____________Instructions for Chrome for packaging<br>
+└─ src<br>
+. ├── keeraBackground.js_____Runs in the active tab<br>
+. ├── keeraMenu.html________Popup menu shown in the top right corner in click<br>
+. └── keeraMenu.js__________Keeps keeraMenu.html interactive<br>
 
 # To do
 
