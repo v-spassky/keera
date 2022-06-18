@@ -3,7 +3,7 @@
  * of the browser`s window) running. Handles routing between layouts.
  */
 
-const DEBUG = true;    // Enables logging debug information to the console.
+const DEBUG = true;     // Enables logging debug information to the console.
 const LAYOUTS = {       // Maps layout names to the ids of the corresponding HTML elements.
     MAIN_MENU: 'keeraMainMenu',
     DICTIONARY: 'keeraDictionaryLayout',

@@ -107,10 +107,9 @@ const translationInput = document.getElementById('keeraTranslationInput');
 const popupTranslationWondow = document.getElementById('keeraPopupTranslation');
 
 let selectedText = '';
-let wordsToHighlight = {
-    'gives': 'даёт',
-    'Python': 'Питон',
-};
+let wordsToHighlight = {};
+
+getAllWordsFromKeera();
 
 document.addEventListener('selectionchange', setSelectedText);
 document.addEventListener('mouseup', showPopupIfSelectedText);
@@ -122,20 +121,6 @@ popupAddWordBtn.addEventListener(
         hidePopup();
     }
 );
-
-highlightAllWords();
-
-const highlightedWords = document.getElementsByName('keeraHighlightedWord');
-if (DEBUG) console.log(`Highlighted words count: ${highlightedWords.length}.`);
-
-for (let wordElement of highlightedWords) {
-    if (DEBUG) console.log(`Adding event listener to word ${wordElement}.`);
-    wordElement.addEventListener('mouseenter', showTranslation);
-    wordElement.addEventListener('mouseleave', hideTranslation);
-}
-
-getAllWordsFromKeera();
-console.log(wordsToHighlight)
 
 // -------------------------- Event handlers -------------------------- //
 
@@ -245,6 +230,7 @@ function saveWordToKeera(word, translation) {
     );
 
     translationInput.value = '';
+    getAllWordsFromKeera();
 }
 
 function getAllWordsFromKeera() {
@@ -253,16 +239,24 @@ function getAllWordsFromKeera() {
      * Fills the dictionary layout with words from Keera local storage.
      */
 
-    if (DEBUG) console.log(`Function getAllWordsFromKeera() triggered.`);
-
-    chrome.storage.sync.get(
-        null,
-        function(keeraStorage) {
-
-            console.log(`Keera storage: ${JSON.stringify(keeraStorage)}.`);
-
-            for ([word, translation] of Object.entries(keeraStorage)) {
-                wordsToHighlight[word] = translation;
+    let p = new Promise(function (resolve, reject) {
+        keeraStorage = {};
+        chrome.storage.sync.get(
+            null, 
+            function(keeraStorage) {
+                resolve(keeraStorage);
+            }
+        );
+    });
+        p.then(function (keeraStorage) {
+            wordsToHighlight = {...keeraStorage};
+            highlightAllWords();
+            const highlightedWords = document.getElementsByName('keeraHighlightedWord');
+            if (DEBUG) console.log(`Highlighted words count: ${highlightedWords.length}.`);
+            for (let wordElement of highlightedWords) {
+                if (DEBUG) console.log(`Adding event listener to word ${wordElement}.`);
+                wordElement.addEventListener('mouseenter', showTranslation);
+                wordElement.addEventListener('mouseleave', hideTranslation);
             }
         }
     );
@@ -303,7 +297,7 @@ function highlightAllWords() {
                 span.style.boxShadow = '2px 2px 2px 2px rgba(0, 0, 255, .1)'
                 span.style.color = 'white';
                 span.style.borderRadius = '3px';
-                span.style.padding = '4px';
+                span.style.padding = '2px';
                 span.setAttribute('name', 'keeraHighlightedWord');
                 span.setAttribute('data-translation', translation);
                 DOMElement.innerHTML = DOMElement.innerHTML.replaceAll(word, span.outerHTML);
