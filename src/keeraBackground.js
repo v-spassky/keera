@@ -6,7 +6,7 @@
  * with the provided translation being shown in a popup.
  */
 
-const DEBUG = false;           // Enables logging debug information to the console.
+const DEBUG = false;          // Enables logging debug information to the console.
 const POPUP_OFFSET_PX = {     // Offset of the popup menu from the mouse cursor.
     x:  15,
     y: -15,
@@ -64,6 +64,19 @@ const popupSnippet = `
                 box-shadow: 1px 1px 1px 1px rgba(0, 0, 255, .1);
                 font-family: 'Roboto Flex', sans-serif;">
     </div>
+    <button id="keeraDeleteTranslationBtn"
+            class="hidden"
+            style="position: absolute;
+                   width: fit-content; height: fit-content;
+                   padding: 6px;
+                   border-radius: 4px; border: none;
+                   color: white; font-weight: 400;
+                   background: rgb(239,23,12);
+                   background: linear-gradient(90deg, rgba(239,23,12,1) 0%, rgba(255,124,30,1) 100%);
+                   cursor: pointer;
+                   font-family: 'Roboto Flex', sans-serif;">
+        Delete
+    </button>
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,500&display=swap');
 
@@ -95,6 +108,21 @@ const popupSnippet = `
         opacity: 1;
         visibility: visible;
     }
+
+    #keeraDeleteTranslationBtn {
+        transition: all 1s ease-out 0.25s;
+        transition-property: opacity, visibility;
+    }
+
+    #keeraDeleteTranslationBtn.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    #keeraDeleteTranslationBtn.visible {
+        opacity: 1;
+        visibility: visible;
+    }
     </style>
 `;
 
@@ -105,6 +133,7 @@ const popupAddWordBtn = document.getElementById('addWordToKeeraBtn');
 const selectedWordInput = document.getElementById('keeraSelectedWord');
 const translationInput = document.getElementById('keeraTranslationInput');
 const popupTranslationWondow = document.getElementById('keeraPopupTranslation');
+const popupDeleteTranslationBtn = document.getElementById('keeraDeleteTranslationBtn');
 
 let selectedText = '';
 let wordsToHighlight = {};
@@ -120,6 +149,10 @@ popupAddWordBtn.addEventListener(
         saveWordToKeera(selectedText, translationInput.value);
         hidePopup();
     }
+);
+popupDeleteTranslationBtn.addEventListener(
+    'click',
+    deleteWordFromKeera
 );
 
 // -------------------------- Event handlers -------------------------- //
@@ -210,6 +243,43 @@ function hideTranslation() {
     popupTranslationWondow.classList.add('hidden');
 }
 
+function showDeleteBtn(event) {
+    
+    /* 
+     * Shows the delete button for a particular word or rightclick.
+     */
+
+    event.preventDefault();
+
+    let mousePosition = {
+        x: event.pageX,
+        y: event.pageY,
+    };
+    
+    if (DEBUG) console.log(`Function showDeleteBtn() triggered.`);
+    
+    popupDeleteTranslationBtn.classList.remove('hidden');
+    popupDeleteTranslationBtn.classList.add('visible');
+    popupDeleteTranslationBtn.style.left = `${mousePosition.x + POPUP_OFFSET_PX.x}px`;
+    popupDeleteTranslationBtn.style.top = `${mousePosition.y + POPUP_OFFSET_PX.y}px`;
+    popupDeleteTranslationBtn.setAttribute('data-word-to-delete', event.target.innerText);
+
+    setTimeout(hideDeleteBtn, 4000);
+}
+
+function hideDeleteBtn() {
+
+    /* 
+     * Hides the delete button for a particular word.
+     */
+
+    if (DEBUG) console.log(`Function hideDeleteBtn() triggered.`);
+
+    popupDeleteTranslationBtn.classList.remove('visible');
+    popupDeleteTranslationBtn.classList.add('hidden');
+    popupDeleteTranslationBtn.setAttribute('data-word-to-delete', '');
+}
+
 // ------------------ Operations with Chrome storage ------------------ //
 
 function saveWordToKeera(word, translation) {
@@ -257,6 +327,38 @@ function getAllWordsFromKeera() {
                 if (DEBUG) console.log(`Adding event listener to word ${wordElement}.`);
                 wordElement.addEventListener('mouseenter', showTranslation);
                 wordElement.addEventListener('mouseleave', hideTranslation);
+                wordElement.addEventListener('contextmenu', showDeleteBtn);
+            }
+        }
+    );
+}
+
+function deleteWordFromKeera() {
+
+    /* 
+     * Deletes a word from the Chrome storage.
+     */
+
+    let wordToDelete = popupDeleteTranslationBtn.getAttribute('data-word-to-delete');
+
+    if (DEBUG) console.log(`Function deleteWordFromKeera() triggered.`);
+    if (DEBUG) console.log(`Going to try deleting word '${wordToDelete}'.`);
+
+    chrome.storage.sync.remove(
+        wordToDelete, 
+        function() {
+            if (DEBUG) console.log(`Word '${wordToDelete}' deleted from Keera.`);
+        }
+    );
+
+    hideDeleteBtn();
+    popupDeleteTranslationBtn.setAttribute('data-word', '');
+
+    elementsToUnhighlight = document.querySelectorAll('span[name="keeraHighlightedWord"]')
+    elementsToUnhighlight.forEach(
+        function(element) {
+            if (element.innerText === wordToDelete) {
+                element.outerHTML = element.innerText;
             }
         }
     );
