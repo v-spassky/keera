@@ -34,7 +34,8 @@ keera
 ├─ LICENSE
 ├─ README.md
 ├─ files_for_readme
-│ └── demo_1.gif
+│ ├── demo_1.gif
+│ └── demo_2.gif
 ├─ icons
 │ ├── keera_icon_128.png
 │ ├── keera_icon_16.png
