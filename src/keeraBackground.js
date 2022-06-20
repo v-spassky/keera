@@ -383,6 +383,8 @@ function highlightAllWords() {
 
         if (DEBUG) console.log(`Checking element: '${DOMElement}'.`);
 
+        if (isHidden(DOMElement)) continue;
+
         for ([word, translation] of Object.entries(wordsToHighlight)) {
 
             if (DEBUG) console.log(`Checking if '${word}' is in '${DOMElement.innerText}'.`);
@@ -406,4 +408,9 @@ function highlightAllWords() {
             }
         }
     } 
+}
+
+function isHidden(el) {
+    let style = window.getComputedStyle(el);
+    return (style.display === 'none') || (style.visibility === 'hidden')
 }
