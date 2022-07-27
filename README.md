@@ -16,16 +16,14 @@ Typical usecase scenario:
 
 Afterwards the fragment will be highlighted on all pages when encountered. Translation will be shown on hover.
 
-<img src="files_for_readme/demo_1.gif"
-     width="1000" style="max-width: 100%;"/>
+<img src="files_for_readme/demo_1.gif" width="750" style="max-width: 100%;"/>
 
 A fragment can be deleted as well:
 
 - Rightclick on a highlighted word;
 - Click 'Delete'.
 
-<img src="files_for_readme/demo_2.gif"
-     width="1000" style="max-width: 100%;"/>
+<img src="files_for_readme/demo_2.gif" width="750" style="max-width: 100%;"/>
 
 # Project file structure
 ```
