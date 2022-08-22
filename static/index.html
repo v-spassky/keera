@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+
+    <title>keera</title>
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap" rel="stylesheet">
+
+</head>
+<body class="min-h-screen w-full relative
+             flex justify-center items-center
+             bg-pink-100 text-zinc-800 p-2"
+      style="font-family: 'Source Code Pro', monospace;"
+      x-data="globalData">
+
+    <aside class="fixed top-1/4 left-0
+                  bg-gradient-to-tr from-pink-300 via-purple-300 to-indigo-400
+                  p-2 pl-0 space-y-2
+                  list-none font-bold select-none">
+
+        <li class="cursor-pointer relative">
+            <span x-text=" currentSection == 'about' ? '•' : '&nbsp;' "></span>about
+        </li>
+
+        <li class="cursor-pointer">
+            <span x-text=" currentSection == 'installation' ? '•' : '&nbsp;' "></span>installation
+        </li>
+
+        <li class="cursor-pointer">
+            <span x-text=" currentSection == 'usage' ? '•' : '&nbsp;' "></span>usage
+        </li>
+
+        <li class="cursor-pointer">
+            <span x-text=" currentSection == 'source' ? '•' : '&nbsp;' "></span>source
+        </li>
+
+    </aside>
+
+    <main class="w-1/2">
+
+        <p>
+
+        </p>
+
+    </main>
+
+    <script>
+
+        let globalData = {
+
+            currentSection: 'usage'
+
+        }
+
+    </script>
+
+</body>
