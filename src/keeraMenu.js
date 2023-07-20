@@ -18,7 +18,7 @@ let currentLayout = LAYOUTS.MAIN_MENU;
 
                         // Bind all routing buttous to corresponding layouts.
 document.getElementById('dictionaryBtn').addEventListener(
-    'click', 
+    'click',
     function () {
         switchLayout(LAYOUTS.DICTIONARY);
         getAllWordsFromKeera();
@@ -37,7 +37,7 @@ for (button of backButtons) {
 
 function switchLayout(layout) {
 
-    /* 
+    /*
      * Callback for switching between layouts.
      * Sets current layout`s display property to 'none' and new layout`s display property to 'block'.
      */
@@ -55,7 +55,7 @@ function switchLayout(layout) {
 
 function getAllWordsFromKeera() {
 
-    /* 
+    /*
      * Fills the dictionary layout with words from Keera local storage.
      */
 

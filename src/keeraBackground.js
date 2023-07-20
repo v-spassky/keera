@@ -15,8 +15,8 @@ const POPUP_OFFSET_PX = {     // Offset of the popup menu from the mouse cursor.
 const popupSnippet = `
     <div id="keeraPopupMenu"
          class="hidden"
-         style="position: absolute; 
-                background-image: linear-gradient(to right, #8360c3, #2ebf91); 
+         style="position: absolute;
+                background-image: linear-gradient(to right, #8360c3, #2ebf91);
                 width: fit-content; height: fit-content;
                 padding: 8px; border-radius: 8px;
                 box-shadow: 4px 4px 4px 4px rgba(0, 0, 255, .1);
@@ -159,7 +159,7 @@ popupDeleteTranslationBtn.addEventListener(
 
 function setSelectedText(event) {
 
-    /* 
+    /*
      * Callback for a 'selectionchange' event.
      * Sets global variable 'selectedText' to the highlighted text value.
      */
@@ -175,7 +175,7 @@ function setSelectedText(event) {
 
 function showPopupIfSelectedText(event) {
 
-    /* 
+    /*
      * Callback for a 'mouseup' event.
      * Shows the popup menu if the selected text is not empty.
      */
@@ -198,7 +198,7 @@ function showPopupIfSelectedText(event) {
 
 function hidePopup() {
 
-    /* 
+    /*
      * Callback for a 'click' event on the popup close button.
      * Hides the popup menu. Flushes selected text value.
      */
@@ -213,7 +213,7 @@ function hidePopup() {
 
 function showTranslation(event) {
 
-    /* 
+    /*
      * Shows the translation of the selected word in a popup.
      */
 
@@ -233,7 +233,7 @@ function showTranslation(event) {
 
 function hideTranslation() {
 
-    /* 
+    /*
      * Hides the translation of the selected word in a popup.
      */
 
@@ -244,8 +244,8 @@ function hideTranslation() {
 }
 
 function showDeleteBtn(event) {
-    
-    /* 
+
+    /*
      * Shows the delete button for a particular word or rightclick.
      */
 
@@ -255,9 +255,9 @@ function showDeleteBtn(event) {
         x: event.pageX,
         y: event.pageY,
     };
-    
+
     if (DEBUG) console.log(`Function showDeleteBtn() triggered.`);
-    
+
     popupDeleteTranslationBtn.classList.remove('hidden');
     popupDeleteTranslationBtn.classList.add('visible');
     popupDeleteTranslationBtn.style.left = `${mousePosition.x + POPUP_OFFSET_PX.x}px`;
@@ -269,7 +269,7 @@ function showDeleteBtn(event) {
 
 function hideDeleteBtn() {
 
-    /* 
+    /*
      * Hides the delete button for a particular word.
      */
 
@@ -284,7 +284,7 @@ function hideDeleteBtn() {
 
 function saveWordToKeera(word, translation) {
 
-    /* 
+    /*
      * Saves a word to the Chrome storage.
      * The word is saved as a key and the translation as a value.
      */
@@ -293,7 +293,7 @@ function saveWordToKeera(word, translation) {
     if (DEBUG) console.log(`Going to try saving word '${word}' with translation: '${translation}'.`);
 
     chrome.storage.sync.set(
-        {[word]: translation}, 
+        {[word]: translation},
         function() {
             if (DEBUG) console.log(`Word '${word}' added to Keera with following translation: '${translation}'.`);
         }
@@ -305,14 +305,14 @@ function saveWordToKeera(word, translation) {
 
 function getAllWordsFromKeera() {
 
-    /* 
+    /*
      * Fills the dictionary layout with words from Keera local storage.
      */
 
     let p = new Promise(function (resolve, reject) {
         keeraStorage = {};
         chrome.storage.sync.get(
-            null, 
+            null,
             function(keeraStorage) {
                 resolve(keeraStorage);
             }
@@ -335,7 +335,7 @@ function getAllWordsFromKeera() {
 
 function deleteWordFromKeera() {
 
-    /* 
+    /*
      * Deletes a word from the Chrome storage.
      */
 
@@ -345,7 +345,7 @@ function deleteWordFromKeera() {
     if (DEBUG) console.log(`Going to try deleting word '${wordToDelete}'.`);
 
     chrome.storage.sync.remove(
-        wordToDelete, 
+        wordToDelete,
         function() {
             if (DEBUG) console.log(`Word '${wordToDelete}' deleted from Keera.`);
         }
@@ -368,7 +368,7 @@ function deleteWordFromKeera() {
 
 function highlightAllWords() {
 
-    /* 
+    /*
      * Recursively searches through DOM for words listed in
      * global 'wordsToHighlight' list and substitutes them with <span> elements.
      */
@@ -407,7 +407,7 @@ function highlightAllWords() {
                 DOMElement.innerHTML = DOMElement.innerHTML.replaceAll(word, span.outerHTML);
             }
         }
-    } 
+    }
 }
 
 function isHidden(el) {

@@ -19,7 +19,7 @@
             "16": "/assets/icons/keeraicon16.png",
             "32": "/assets/icons/keeraicon32.png",
             "48": "/assets/icons/keeraicon48.png",
-            "128": "/assets/icons/keeraicon128.png" 
+            "128": "/assets/icons/keeraicon128.png"
         }
     },
     "icons": {
@@ -28,5 +28,4 @@
         "48": "/assets/icons/keeraicon48.png",
         "128": "/assets/icons/keeraicon128.png"
     }
-
 }
