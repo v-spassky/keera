@@ -1,17 +1,14 @@
 /*
- * Chrome extension background script for Keera. Modifies every page loaded in the browser
- * by showing a popup menu after highlighting text segment (usually a word),
- * suggesting adding the segment/word to a local storage. When a word is added to storage
- * with provided translation, it will be highlighted in the browser after subsequent encounters
- * with the provided translation being shown in a popup.
+ * Browser extension background script for Keera. Modifies every page loaded
+ * in the browser by showing a popup menu after highlighting text segment
+ * (usually a word), suggesting adding the segment/word to a local storage.
+ * When a word is added to storage with provided translation, it will be
+ * highlighted in the browser after subsequent encounters with the provided
+ * translation being shown in a popup.
  */
 
-const DEBUG = false;          // Enables logging debug information to the console.
-const POPUP_OFFSET_PX = {     // Offset of the popup menu from the mouse cursor.
-    x:  15,
-    y: -15,
-};
-                              // Initial popup menu HTML.
+const POPUP_OFFSET_PX = { x: 15, y: -15 };
+
 const popupSnippet = `
     <div id="keeraPopupMenu"
          class="hidden"
@@ -132,7 +129,7 @@ const popupCloseBtn = document.getElementById('keeraClosePopupBtn');
 const popupAddWordBtn = document.getElementById('addWordToKeeraBtn');
 const selectedWordInput = document.getElementById('keeraSelectedWord');
 const translationInput = document.getElementById('keeraTranslationInput');
-const popupTranslationWondow = document.getElementById('keeraPopupTranslation');
+const popupTranslationWindow = document.getElementById('keeraPopupTranslation');
 const popupDeleteTranslationBtn = document.getElementById('keeraDeleteTranslationBtn');
 
 let selectedText = '';
@@ -145,7 +142,7 @@ document.addEventListener('mouseup', showPopupIfSelectedText);
 popupCloseBtn.addEventListener('click', hidePopup);
 popupAddWordBtn.addEventListener(
     'click',
-    function() {
+    function () {
         saveWordToKeera(selectedText, translationInput.value);
         hidePopup();
     }
@@ -155,33 +152,20 @@ popupDeleteTranslationBtn.addEventListener(
     deleteWordFromKeera
 );
 
-// -------------------------- Event handlers -------------------------- //
+// ----------------------------- Event handlers ---------------------------- //
 
-function setSelectedText(event) {
-
-    /*
-     * Callback for a 'selectionchange' event.
-     * Sets global variable 'selectedText' to the highlighted text value.
-     */
-
-    if (DEBUG) console.log(`Function setSelectedText(event) triggered.`);
-
+function setSelectedText(_event) {
     if (popupMenu.classList.contains('hidden')) {
-        selectedText = document.getSelection ? document.getSelection().toString() :  document.selection.createRange().toString();
+        if (document.getSelection) {
+            selectedText = document.getSelection().toString();
+        } else {
+            selectedText = document.selection.createRange().toString();
+        }
     }
-
-    if (DEBUG) console.log(`Selected text: '${selectedText}'.`);
 }
 
+
 function showPopupIfSelectedText(event) {
-
-    /*
-     * Callback for a 'mouseup' event.
-     * Shows the popup menu if the selected text is not empty.
-     */
-
-    if (DEBUG) console.log(`Function showPopupIfSelectedText() triggered.`);
-
     let mousePosition = {
         x: event.pageX,
         y: event.pageY,
@@ -192,71 +176,41 @@ function showPopupIfSelectedText(event) {
         popupMenu.classList.add('visible');
         popupMenu.style.left = `${mousePosition.x + POPUP_OFFSET_PX.x}px`;
         popupMenu.style.top = `${mousePosition.y + POPUP_OFFSET_PX.y}px`;
-        translationInput.placeholder=`Translation for '${selectedText}'...`;
+        translationInput.placeholder = `Translation for '${selectedText}'...`;
     }
 }
 
 function hidePopup() {
-
-    /*
-     * Callback for a 'click' event on the popup close button.
-     * Hides the popup menu. Flushes selected text value.
-     */
-
-    if (DEBUG) console.log(`Function hidePopup() triggered.`);
-
     popupMenu.classList.remove('visible');
     popupMenu.classList.add('hidden');
-    translationInput.value='';
+    translationInput.value = '';
     selectedText = '';
 }
 
 function showTranslation(event) {
-
-    /*
-     * Shows the translation of the selected word in a popup.
-     */
-
-    if (DEBUG) console.log(`Function showTranslation() triggered.`);
-
     let mousePosition = {
         x: event.pageX,
         y: event.pageY,
     };
 
-    popupTranslationWondow.classList.remove('hidden');
-    popupTranslationWondow.classList.add('visible');
-    popupTranslationWondow.style.left = `${mousePosition.x + POPUP_OFFSET_PX.x}px`;
-    popupTranslationWondow.style.top = `${mousePosition.y + POPUP_OFFSET_PX.y}px`;
-    popupTranslationWondow.innerText = event.target.getAttribute('data-translation');
+    popupTranslationWindow.classList.remove('hidden');
+    popupTranslationWindow.classList.add('visible');
+    popupTranslationWindow.style.left = `${mousePosition.x + POPUP_OFFSET_PX.x}px`;
+    popupTranslationWindow.style.top = `${mousePosition.y + POPUP_OFFSET_PX.y}px`;
+    popupTranslationWindow.innerText = event.target.getAttribute('data-translation');
 }
 
 function hideTranslation() {
-
-    /*
-     * Hides the translation of the selected word in a popup.
-     */
-
-    if (DEBUG) console.log(`Function hideTranslation() triggered.`);
-
-    popupTranslationWondow.classList.remove('visible');
-    popupTranslationWondow.classList.add('hidden');
+    popupTranslationWindow.classList.remove('visible');
+    popupTranslationWindow.classList.add('hidden');
 }
 
 function showDeleteBtn(event) {
-
-    /*
-     * Shows the delete button for a particular word or rightclick.
-     */
-
     event.preventDefault();
-
     let mousePosition = {
         x: event.pageX,
         y: event.pageY,
     };
-
-    if (DEBUG) console.log(`Function showDeleteBtn() triggered.`);
 
     popupDeleteTranslationBtn.classList.remove('hidden');
     popupDeleteTranslationBtn.classList.add('visible');
@@ -268,133 +222,65 @@ function showDeleteBtn(event) {
 }
 
 function hideDeleteBtn() {
-
-    /*
-     * Hides the delete button for a particular word.
-     */
-
-    if (DEBUG) console.log(`Function hideDeleteBtn() triggered.`);
-
     popupDeleteTranslationBtn.classList.remove('visible');
     popupDeleteTranslationBtn.classList.add('hidden');
     popupDeleteTranslationBtn.setAttribute('data-word-to-delete', '');
 }
 
-// ------------------ Operations with Chrome storage ------------------ //
+// ------------- Operations with the browser extension storage ------------- //
 
 function saveWordToKeera(word, translation) {
-
-    /*
-     * Saves a word to the Chrome storage.
-     * The word is saved as a key and the translation as a value.
-     */
-
-    if (DEBUG) console.log(`Function saveWordToKeera() triggered.`);
-    if (DEBUG) console.log(`Going to try saving word '${word}' with translation: '${translation}'.`);
-
-    chrome.storage.sync.set(
-        {[word]: translation},
-        function() {
-            if (DEBUG) console.log(`Word '${word}' added to Keera with following translation: '${translation}'.`);
-        }
-    );
-
+    browser.storage.local.set({ [word]: translation }).then(() => { }, onError);
     translationInput.value = '';
     getAllWordsFromKeera();
 }
 
 function getAllWordsFromKeera() {
-
-    /*
-     * Fills the dictionary layout with words from Keera local storage.
-     */
-
-    let p = new Promise(function (resolve, reject) {
-        keeraStorage = {};
-        chrome.storage.sync.get(
-            null,
-            function(keeraStorage) {
-                resolve(keeraStorage);
-            }
-        );
-    });
-        p.then(function (keeraStorage) {
-            wordsToHighlight = {...keeraStorage};
-            highlightAllWords();
-            const highlightedWords = document.getElementsByName('keeraHighlightedWord');
-            if (DEBUG) console.log(`Highlighted words count: ${highlightedWords.length}.`);
-            for (let wordElement of highlightedWords) {
-                if (DEBUG) console.log(`Adding event listener to word ${wordElement}.`);
-                wordElement.addEventListener('mouseenter', showTranslation);
-                wordElement.addEventListener('mouseleave', hideTranslation);
-                wordElement.addEventListener('contextmenu', showDeleteBtn);
-            }
+    browser.storage.local.get(null).then((items) => {
+        wordsToHighlight = { ...items };
+        highlightAllWords();
+        const highlightedWords = document.getElementsByName('keeraHighlightedWord');
+        for (let wordElement of highlightedWords) {
+            wordElement.addEventListener('mouseenter', showTranslation);
+            wordElement.addEventListener('mouseleave', hideTranslation);
+            wordElement.addEventListener('contextmenu', showDeleteBtn);
         }
-    );
+    }, onError);
 }
 
 function deleteWordFromKeera() {
-
-    /*
-     * Deletes a word from the Chrome storage.
-     */
-
     let wordToDelete = popupDeleteTranslationBtn.getAttribute('data-word-to-delete');
 
-    if (DEBUG) console.log(`Function deleteWordFromKeera() triggered.`);
-    if (DEBUG) console.log(`Going to try deleting word '${wordToDelete}'.`);
+    browser.storage.local.remove(wordToDelete).then(() => {
+        hideDeleteBtn();
+        popupDeleteTranslationBtn.setAttribute('data-word', '');
 
-    chrome.storage.sync.remove(
-        wordToDelete,
-        function() {
-            if (DEBUG) console.log(`Word '${wordToDelete}' deleted from Keera.`);
-        }
-    );
-
-    hideDeleteBtn();
-    popupDeleteTranslationBtn.setAttribute('data-word', '');
-
-    elementsToUnhighlight = document.querySelectorAll('span[name="keeraHighlightedWord"]')
-    elementsToUnhighlight.forEach(
-        function(element) {
+        let elementsToUnhighlight = document.querySelectorAll('span[name="keeraHighlightedWord"]');
+        elementsToUnhighlight.forEach(function (element) {
             if (element.innerText === wordToDelete) {
                 element.outerHTML = element.innerText;
             }
-        }
-    );
+        });
+    }, onError);
 }
 
-// ----------------------- Highlighting system ----------------------- //
+function onError(error) {
+    console.error(`Error: ${error}`);
+}
+
+
+// -------------------------- Highlighting system -------------------------- //
+
 
 function highlightAllWords() {
-
-    /*
-     * Recursively searches through DOM for words listed in
-     * global 'wordsToHighlight' list and substitutes them with <span> elements.
-     */
-
-    if (DEBUG) console.log(`Function highlightAllWords() triggered.`);
-
     let allBodyElements = document.querySelectorAll('body *');
-
-    if (DEBUG) console.log(`Found ${allBodyElements.length} elements in the body.`);
-
     for (DOMElement of allBodyElements) {
-
-        if (DEBUG) console.log(`Checking element: '${DOMElement}'.`);
-
-        if (isHidden(DOMElement)) continue;
-
+        if (isHidden(DOMElement)) {
+            continue;
+        }
         for ([word, translation] of Object.entries(wordsToHighlight)) {
-
-            if (DEBUG) console.log(`Checking if '${word}' is in '${DOMElement.innerText}'.`);
-
             elementText = DOMElement.innerText || [];
-
             if (elementText.includes(word)) {
-
-                if (DEBUG) console.log(`Found word '${word}' in element with innerText: '${DOMElement.innerText}'.`);
-
                 let span = document.createElement('span');
                 span.innerText = word;
                 span.style.background = 'linear-gradient(to right, #8360c3, #2ebf91)';
@@ -412,5 +298,5 @@ function highlightAllWords() {
 
 function isHidden(el) {
     let style = window.getComputedStyle(el);
-    return (style.display === 'none') || (style.visibility === 'hidden')
+    return (style.display === 'none') || (style.visibility === 'hidden');
 }

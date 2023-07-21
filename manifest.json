@@ -1,6 +1,6 @@
 {
     "name": "Keera",
-    "description": "Lets you add words with providied translation to local storage. When encountering added words, they will have a popup translation.",
+    "description": "Lets you add words with provided translation to local storage. When encountering added words, they will have a popup translation.",
     "version": "0.1.0",
     "manifest_version": 3,
     "content_scripts": [
