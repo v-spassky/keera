@@ -18,9 +18,6 @@ const popupSnippet = `
                 padding: 8px; border-radius: 8px;
                 box-shadow: 4px 4px 4px 4px rgba(0, 0, 255, .1);
                 font-family: 'Roboto Flex', sans-serif;">
-        <input type="hidden"
-               id="keeraSelectedWord"
-               value="">
         <input type="text"
                placeholder="Translation..."
                id="keeraTranslationInput"
@@ -127,7 +124,6 @@ document.body.insertAdjacentHTML('beforeend', popupSnippet);
 const popupMenu = document.getElementById('keeraPopupMenu')
 const popupCloseBtn = document.getElementById('keeraClosePopupBtn');
 const popupAddWordBtn = document.getElementById('addWordToKeeraBtn');
-const selectedWordInput = document.getElementById('keeraSelectedWord');
 const translationInput = document.getElementById('keeraTranslationInput');
 const popupTranslationWindow = document.getElementById('keeraPopupTranslation');
 const popupDeleteTranslationBtn = document.getElementById('keeraDeleteTranslationBtn');
@@ -274,12 +270,12 @@ function onError(error) {
 
 function highlightAllWords() {
     let allBodyElements = document.querySelectorAll('body *');
-    for (DOMElement of allBodyElements) {
+    for (let DOMElement of allBodyElements) {
         if (isHidden(DOMElement)) {
             continue;
         }
-        for ([word, translation] of Object.entries(wordsToHighlight)) {
-            elementText = DOMElement.innerText || [];
+        for (let [word, translation] of Object.entries(wordsToHighlight)) {
+            let elementText = DOMElement.innerText || [];
             if (elementText.includes(word)) {
                 let span = document.createElement('span');
                 span.innerText = word;
@@ -298,5 +294,9 @@ function highlightAllWords() {
 
 function isHidden(el) {
     let style = window.getComputedStyle(el);
-    return (style.display === 'none') || (style.visibility === 'hidden');
+    let isCSSHidden = (style.display === 'none') || (style.visibility === 'hidden');
+    let isZeroSize = el.offsetWidth === 0 && el.offsetHeight === 0;
+    let isOffScreen = el.getBoundingClientRect().left < 0;
+    let isInvisible = el.tagName === "SCRIPT" || el.tagName === "STYLE";
+    return isCSSHidden || isZeroSize || isOffScreen || isInvisible;
 }

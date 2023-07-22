@@ -14,8 +14,6 @@ const backButtons = document.getElementsByName('backBtn');
 let previousLayout = null;
 let currentLayout = LAYOUTS.MAIN_MENU;
 
-let storage = window.localStorage;
-
 document.getElementById('dictionaryBtn').addEventListener(
     'click',
     function () {
@@ -27,7 +25,7 @@ document.getElementById('settingsBtn').addEventListener(
     'click',
     function () {switchLayout(LAYOUTS.SETTINGS)}
 );
-for (button of backButtons) {
+for (let button of backButtons) {
     button.addEventListener(
         'click',
         function () {switchLayout(previousLayout)}
